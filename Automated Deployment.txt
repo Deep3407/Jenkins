@@ -1,0 +1,383 @@
+Automation Deployment:
+
+	It is a process of Automating the Deployment process in a Continuous Delivery System.
+
+
+Main Stages in Continuous Delivery & Deployment Pipelines:
+
+
+Build --> Deploy --> Test --> Release
+
+- These are Chained Processes, 
+- It means when the Build is success, then only Deploy will get started, 
+- Same like seeing the success of Deployment, the Testing happens. 
+- Also after every job, will have a notification, which tell us about its status
+
+This is called as "Continuous Integrated Sytem"
+
+
+Step 1 -- Start the Jenkins and login into the console
+
+Step 2 -- Install Deploy Plugins called as "Deploy to container"
+
+Step 3 -- Create a Build Job in Jenkins
+
+Step 4 -- Add Post build Action - Deploy war/ear to container, Choose container, credentials.
+
+note ( paste the sample.war file in  /var/lib/jenkins/workspace )
+
+Step 5 -- In tomcat-users.xml [under /opt/apache-tomcat-7.0.91/conf] add user for DEPLOYMENT [Install TOMCAT before that]
+
+   <role rolename="manager-gui"/>
+   <role rolename="manager-script"/>
+   <role rolename="manager-jmx"/>
+   <role rolename="manager-status"/>
+   <user username="admin" password="admin" roles="manager-gui,manager-script,manager-jmx,manager-status"/>
+   <user username="deployer" password="deployer" roles="manager-script"/>
+
+
+Step 6 -- Place the war file in the appropirate path.
+		eg: /var/lib/jenkins/workspace/AutoDeployment/sample.war
+
+step 7 -- in jenkins job - configure - post build- deploy dir- **/*.war - contex path ( sample ) 
+
+step 8 -- go to -- webapps path -- manager -- Meta-inf -- context.xml ( comment that file that 
+
+<!--  <Valve className="org.apache.catalina.valves.RemoteAddrValve"
+        allow="127\.\d+\.\d+\.\d+|::1|0:0:0:0:0:0:0:1" />
+ 
+
+Step  -- Run & Validate.
+
+Step  -- WAR should be available under the tomcat's webapps folder.
+
+============================================================================================
+
+TOMCAT Installation:
+
+Step 1 -- Goto the link https://tomcat.apache.org/download-70.cgi & donwload the binaries[tar.gz under CORE].
+
+Step 2 -- Once the file [apache-tomcat-7.0.91.tar] is downloaded, move it to the server.
+
+Step 3 -- Copy it to the /opt location in the server.
+
+Step 4 -- untar the file -> tar zxvf <filename>
+
+Step 5 -- delete the .gz file. 
+
+Step 6 -- Goto to the bin path and start tomcat - startup.sh
+
+============================================================================================
+master slave setup
+
+create a slave machine 1 st and install java
+
+go to master machine as ubuntu user
+
+*whoami
+*pwd
+*cd .ssh
+*ls -lrth
+
+you will see the authorised_keys
+
+then
+
+* ssh localhost
+
+it will not allow to connect
+* touch id_rsa.pub
+* touch id_rsa
+* ls -lrt 
+* cp authorised_keys id_rsa.pub
+* ls-lrt
+
+then go to 
+* vi id_rsa
+* paste the (pem key pair file)  
+* chmod 400 * ( giving read only permission for all file)
+
+then 
+ give ssh localhost  it will connect
+---------------------------------------------------------------
+go to slave machine
+
+in that slave machine there is no jenkins so we need give landing path for deployment 
+
+*go as ubuntu user
+*mkdir jenkins
+*cd jenkins
+
+then go manage jenkins - manage nodes - new node - agent(name) -- permanent 
+* number of exec -2
+
+* remote root directory - /home/ubuntu/jenkins
+
+* lables - hdfc
+
+* host - slave ip addrs
+
+credential - add - jenkins-- kind= ssh username
+username = ubuntu
+privatekey - enter directly - pem content
+
+select credential -- add ubuntu content
+
+host key verfication strategy -- manualy trusted verification
+
+and finally save
+
+refresh it if it is synch then maaster slave config is finish
+
+
+then go to jenkins dashboard
+
+create a new job 
+
+hdfcjob --- freestyle--save -- build -- pwd
+
+genral --- restricted where this project can be run -- hdfc
+apply and save
+
+run this job
+
+go to slave machine
+
+ls -lrth
+
+cd workspace/
+
+demolish slave.master slave completed.
+--------------------------------------------------------------------
+master slave using amazonec2 plugin with cloud operation 
+
+Step - download amazonec2 pluging
+
+step - add that inlinepolicy to IAM policy creation and create role based on that 
+
+step - And attach that role jenkins server
+
+step - go to jenkins dashboard -manage node and cloud - create a cloud using that plugin
+
+------------------------------------------------
+Role base stategy concepts 
+
+step - manage jenkins -- dowload role base strategy plugins 
+
+step - security configure -- set the value to role base stategy
+
+step - then we get manage and assing roles -- asign roles
+
+step - create employee - assigne read acces for all 
+
+step - item role - developer -- dev.* - select all
+
+step - and login to a new user 
+
+
+------------------------------------------------
+plugins 
+
+delivery pipeline -- which involves the upstream and dowstream projects
+
+BUILD PIPELINE --PLUGINS
+
+FAMAOUS PLUGINS
+
+GITHUB INTEGRATIION 
+
+MAVEN INTEGRATION 
+
+SONAR SCANER PLUGINS
+
+ANSIBLE PLUGINS
+
+DOCKER PLUGINS
+
+NEXUS ARTIFACT UPLOADER
+
+AMAZON EC2 
+
+THIN BACKUP PLUGIN
+
+S3 PUBLISHER
+
+mailer plugin
+
+slack notification plugin
+
+ssh agent plugin
+
+
+user management plugin
+
+go to mange plugin - role base authorised plugin install 
+
+then go to congiuration tool -- role base startegy -- apply and save
+
+then manange usr -- create new usr 
+
+then after that manage jenkin
+
+mange and assige role --- mange role
+
+role to add -- employee -- add
+
+gives read and view
+
+item roles -- role to add -- developer -- dev.*
+
+then 
+assigne role -- give appropriate settings and save 
+
+then -- login as that user 
+
+---------------------------------------
+various method trigger a job
+
+
+task 
+
+1.  find out the file path for  installed plugins
+2.  find the error path when you install plugin it is not installed 
+3.   
+
+
+
+
+
+http://18.142.253.218:8080/job/myjob/build?token=12345
+
+
+developer -- job run permission -- dev job -- dev.*
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+ 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+ 	 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
